@@ -147,10 +147,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FruitPunch.cpp" />
-    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="parser.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4996</DisableSpecificWarnings>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Closure.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
