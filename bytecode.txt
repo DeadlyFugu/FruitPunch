@@ -1,0 +1,37 @@
+FruitPunch internal bytecode:
+
+source		| name		| bytes
+{...}		| CLOSURE	| 01 <uint8 c_offs>
+24			| INT32		| 02 <int32 value>
+24l			| INT64		| 03 <int64 value>
+2.0			| FLOAT		| 04 <float value>
+2.0d		| DOUBLE	| 05 <double value>
+"hi"		| SSTRING	| 06 <fstr>
+#sym		| SYMBOL	| 07 <fstr>
+<unused>	| ARG		| 08 <fstr>
+[1 2]		| LIST		| 09 <uint8 c_offs>
+<native>	| NATIVEV	| 0A <64-bit pointer>
+"aaa"		| LSTRING	| 0B <char* str (null terminated)>
+
+fn			| CALLV		| 10 <sym>
+$v			| GETV		| 11 <sym>
+>v			| SETV		| 12 <sym>
+>>v			| BINDV		| 13 <sym>
+f(x)		| LCALL		| 14 <sym> <uint8 c_offs>
+(n)			| SUBSTK	| 15 <uint8 c_offs>
+<opt>		| EXEC		| 16
+self		| SELF		| 17
+then else	| IFELSE	| 18 
+.			| DOT		| 19 <uint8 n>
+
+struct fstr {
+	uint8 len+2 // also includes opcode and itself
+				// this way, simple pc+=fstr.len will work
+	char[len] str // null terminated
+}
+
+struct Closure {
+	vector<Closure> subs // c_offs refer to an index in subs
+	uint32 len
+	byte[len] data
+}
