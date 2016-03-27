@@ -159,6 +159,7 @@
     <ClInclude Include="Closure.h" />
     <ClInclude Include="context.h" />
     <ClInclude Include="evaluator.h" />
+    <ClInclude Include="fstring.h" />
     <ClInclude Include="numeric_types.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="parser.h" />
