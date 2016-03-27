@@ -8,7 +8,7 @@
 #include <cstdio>
 
 bool _isprint(char q) {
-	return (q > 0x20 && q < 0x7F);
+	return (q >= 0x20 && q < 0x7F);
 }
 
 void printDebugHex(unsigned char* start, unsigned char* end) {
@@ -19,15 +19,15 @@ void printDebugHex(unsigned char* start, unsigned char* end) {
 		for (unsigned char* q = c; q < c + 16; q++) {
 			if (q < end) {
 				if ((q - c) % 4 == 3) {
-					printf("%02X ", *q);
+					printf("%02X  ", *q);
 				} else {
-					printf("%02X", *q);
+					printf("%02X ", *q);
 				}
 			} else {
 				if ((q - c) % 4 == 3) {
-					printf("   ", *q);
+					printf("    ", *q);
 				} else {
-					printf("  ", *q);
+					printf("   ", *q);
 				}
 			}
 		}

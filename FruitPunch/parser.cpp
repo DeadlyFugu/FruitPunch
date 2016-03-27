@@ -2,6 +2,8 @@
 #include <vector>
 #include <iostream>
 #include <cstdint>
+#include "symbols.h"
+
 
 // disable dumb 'unsafe std::copy' warning
 #define _SCL_SECURE_NO_WARNINGS
@@ -29,6 +31,14 @@ bool hexdigit(char& c) {
 	return false;
 }
 
+bool is_ident_head(char q) {
+	return (q >= 'a' && q <= 'z') || (q >= 'A' && q <= 'Z');
+}
+
+bool is_ident_tail(char q) {
+	return (q >= 'a' && q <= 'z') || (q >= 'A' && q <= 'Z') || (q >= '0' && q <= '9');
+}
+
 Closure* parseClosure(char* start, char* end) {
 	Closure* builder = new Closure();
 	std::vector<char> bytecode;
@@ -36,7 +46,12 @@ Closure* parseClosure(char* start, char* end) {
 #define POST(x) bytecode.push_back(x);
 #define CASE_WS case '\n': case ' ': case '\t': case '\0'
 #define CASE_NUMERAL case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9'
+#define CASE_LOW_ALPHA case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z'
+#define CASE_HIGH_ALPHA case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z'
+#define CASE_ALPHA CASE_LOW_ALPHA: CASE_HIGH_ALPHA
 #define POST_MULTI(value, n_bytes) unsigned char* p = reinterpret_cast<unsigned char*>(&value); for (int i = 0; i < n_bytes; i++) {POST(p[i])};
+#define POST_SYM(opcode) token_start = c; while (is_ident_tail(*++c)); char q = *c; *c = 0; symbol_t sym = symbol(token_start); POST(opcode); POST_MULTI(sym, sizeof(symbol_t)); *c = q;
+
 	char* c = start;
 	char* token_start = nullptr;
 	bool failure = false;
@@ -176,7 +191,7 @@ Closure* parseClosure(char* start, char* end) {
 					*c = q; // restore end of number
 					goto END_NUM_LOOP;
 				}
-				FLOAT_CASE:
+			FLOAT_CASE:
 				case 'f':
 				{
 					*c = 0; // set end of number to null
@@ -200,7 +215,7 @@ Closure* parseClosure(char* start, char* end) {
 				}
 				c++;
 			}
-			END_NUM_LOOP:
+		END_NUM_LOOP:
 			break;
 		}
 		case '\\':
@@ -209,11 +224,38 @@ Closure* parseClosure(char* start, char* end) {
 		case '}':
 			ERROR("unexpected char in input stream")
 			break;
-		default:
-			if (!token_start) {
-				token_start = c;
+		case '$':
+			if (is_ident_head(*++c)) {
+				POST_SYM(0x11)
+			} else {
+				ERROR("expected identifier following $");
 			}
-			c++;
+			break;
+		case '>':
+		{
+			char q = *++c;
+			if (q == '>') {
+				if (is_ident_head(*++c)) {
+					POST_SYM(0x13);
+				} else {
+					ERROR("expected identifier following >>");
+				}
+			} else if (is_ident_head(q)) {
+				POST_SYM(0x12)
+			} else {
+				ERROR("expected identifier following >");
+			}
+			break;
+		}
+		default:
+			if (is_ident_head(*c)) {
+				POST_SYM(0x10);
+			} else {
+				if (!token_start) {
+					token_start = c;
+				}
+				c++;
+			}
 		}
 	}
 	FAILURE_LABEL:

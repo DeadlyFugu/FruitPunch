@@ -150,10 +150,12 @@
     <ClCompile Include="parser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4996</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="symbols.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Closure.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="symbols.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
