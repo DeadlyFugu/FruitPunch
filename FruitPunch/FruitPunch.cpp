@@ -7,12 +7,16 @@
 #include "parser.h"
 #include <cstdio>
 
-void printDebugHex(char* start, char* end) {
+bool _isprint(char q) {
+	return (q > 0x20 && q < 0x7F);
+}
+
+void printDebugHex(unsigned char* start, unsigned char* end) {
 	using namespace std;
 	printf("[HEXDUMP] from 0x%08lX to 0x%08lX\n", start, end);
-	for (char* c = start; c < end; c += 16) {
+	for (unsigned char* c = start; c < end; c += 16) {
 		printf("[%08lX] ", c);
-		for (char* q = c; q < c + 16; q++) {
+		for (unsigned char* q = c; q < c + 16; q++) {
 			if (q < end) {
 				if ((q - c) % 4 == 3) {
 					printf("%02X ", *q);
@@ -28,8 +32,8 @@ void printDebugHex(char* start, char* end) {
 			}
 		}
 		printf("   ");
-		for (char* q = c; q < end && q < c + 16; q++) {
-			if (isprint(*q)) {
+		for (unsigned char* q = c; q < end && q < c + 16; q++) {
+			if (_isprint(*q)) {
 				printf("%c",*q);
 			} else {
 				printf(".");
@@ -59,7 +63,7 @@ int main()
 		// debug parser print
 		char* c_str = &line[0];
 		Closure* clos = parseClosure(c_str, c_str + line.length());
-		printDebugHex(clos->bytecode, clos->bytecode + clos->len);
+		printDebugHex((unsigned char*) clos->bytecode, (unsigned char*) clos->bytecode + clos->len);
 		delete clos;
 	}
 
