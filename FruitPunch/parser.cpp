@@ -261,7 +261,7 @@ Closure* parseClosure(char* start, char* end) {
 	FAILURE_LABEL:
 #undef POST
 	builder->len = bytecode.size();
-	builder->bytecode = new char[builder->len];
+	builder->bytecode = new uint8_t[builder->len];
 #pragma warning(disable: 4996)
 	std::copy(bytecode.begin(), bytecode.end(), builder->bytecode);
 	return builder;

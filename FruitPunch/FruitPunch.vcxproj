@@ -146,15 +146,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="context.cpp" />
+    <ClCompile Include="evaluator.cpp" />
     <ClCompile Include="FruitPunch.cpp" />
     <ClCompile Include="parser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4996</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="stack.cpp" />
     <ClCompile Include="symbols.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Closure.h" />
+    <ClInclude Include="context.h" />
+    <ClInclude Include="evaluator.h" />
+    <ClInclude Include="numeric_types.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="stack.h" />
     <ClInclude Include="symbols.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>

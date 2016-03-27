@@ -6,6 +6,7 @@
 #include "version.h"
 #include "parser.h"
 #include <cstdio>
+#include "evaluator.h"
 
 bool _isprint(char q) {
 	return (q >= 0x20 && q < 0x7F);
@@ -59,11 +60,16 @@ int main()
 		// allow user to exit repl (if they guess the magic password)
 		if (line == ":q") break;
 		// TODO: magic evaluation stuff goes here
-		cout << line << endl; // for now just echoing input
+		//cout << line << endl; // for now just echoing input
 		// debug parser print
 		char* c_str = &line[0];
 		Closure* clos = parseClosure(c_str, c_str + line.length());
 		printDebugHex((unsigned char*) clos->bytecode, (unsigned char*) clos->bytecode + clos->len);
+		Stack* stack = new Stack();
+		context_t root_c = new_context();
+		evaluate(clos, root_c, stack);
+		stack->print_debug();
+		delete stack;
 		delete clos;
 	}
 
