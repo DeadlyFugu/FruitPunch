@@ -14,6 +14,10 @@ void evaluate(Closure* closure, context_t root, Stack* stack) {
 			PUSH(new_int32(*reinterpret_cast<uint32_t*>(pc)));
 			pc += 4;
 		}
+		case 0x04:
+		{
+			PUSH(new_float32(*reinterpret_cast<float*>(pc)));
+		}
 		}
 	}
 }
