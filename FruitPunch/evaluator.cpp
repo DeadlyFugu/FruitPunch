@@ -2,7 +2,7 @@
 #include "numeric_types.h"
 #include "fstring.h"
 
-void evaluate(Closure* closure, context_t root, Stack* stack) {
+void evaluate(closure_t closure, context_t root, Stack* stack) {
 	uint8_t* pc = closure->bytecode;
 	uint8_t* end = closure->bytecode + closure->len;
 
@@ -14,6 +14,11 @@ void evaluate(Closure* closure, context_t root, Stack* stack) {
 	
 	while (pc < end) {
 		switch (*pc++) {
+		case 0x01:
+		{
+			PUSH(closure->subs[READ_PC_AS(uint8_t)]);
+			pc++;
+		} break;
 		case 0x02:
 		{
 			PUSH(new_int32(READ_PC_AS(uint32_t)));

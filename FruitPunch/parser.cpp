@@ -8,8 +8,8 @@
 // disable dumb 'unsafe std::copy' warning
 #define _SCL_SECURE_NO_WARNINGS
 
-Closure* parse(int len, char* src) {
-	return parseClosure(src, src + len);
+closure_t parse(int len, char* src) {
+	return parseClosure(src, src + len, nullptr);
 }
 
 bool hexdigit(char& c) {
@@ -39,8 +39,8 @@ bool is_ident_tail(char q) {
 	return (q >= 'a' && q <= 'z') || (q >= 'A' && q <= 'Z') || (q >= '0' && q <= '9');
 }
 
-Closure* parseClosure(char* start, char* end) {
-	Closure* builder = new Closure();
+closure_t parseClosure(char* start, char* end, char** master_c) {
+	closure_t builder = new_closure();
 	std::vector<char> bytecode;
 #define ERROR(x) std::cout << "[synerr] " << x << std::endl; failure = true; goto FAILURE_LABEL;
 #define POST(x) bytecode.push_back(x);
@@ -72,8 +72,10 @@ Closure* parseClosure(char* start, char* end) {
 		case '(':
 		case '{':
 		{
-			// TODO recurse
-			c++;
+			closure_t sub_closure = parseClosure(++c, end, &c);
+			builder->subs.push_back(sub_closure);
+			POST(0x01);
+			POST((unsigned char) (builder->subs.size() - 1));
 			break;
 		}
 		// quoted strings
@@ -222,7 +224,12 @@ Closure* parseClosure(char* start, char* end) {
 		case ')':
 		case ']':
 		case '}':
-			ERROR("unexpected char in input stream")
+			if (master_c) {
+				*master_c = ++c;
+				goto FAILURE_LABEL;
+			} else {
+				ERROR("unexpected char in input stream")
+			}
 			break;
 		case '$':
 			if (is_ident_head(*++c)) {

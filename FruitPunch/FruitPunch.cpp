@@ -65,14 +65,18 @@ int main()
 		//cout << line << endl; // for now just echoing input
 		// debug parser print
 		char* c_str = &line[0];
-		Closure* clos = parseClosure(c_str, c_str + line.length());
+		closure_t clos = parse(line.length(), c_str);
 		printDebugHex((unsigned char*) clos->bytecode, (unsigned char*) clos->bytecode + clos->len);
+		for (int i = 0; i < clos->subs.size(); i++) {
+			cout << "sub[" << i << "]" << endl;
+			auto sub = clos->subs[i];
+			printDebugHex((unsigned char*) sub->bytecode, (unsigned char*) sub->bytecode + sub->len);
+		}
 		Stack* stack = new Stack();
 		context_t root_c = new_context();
 		evaluate(clos, root_c, stack);
 		stack->print_debug();
 		delete stack;
-		delete clos;
 	}
 
 	return 0;

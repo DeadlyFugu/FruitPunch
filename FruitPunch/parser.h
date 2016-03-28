@@ -1,5 +1,5 @@
 #pragma once
 #include "Closure.h"
 
-Closure* parse(int len, char* src);
-Closure* parseClosure(char* start, char* end);
+closure_t parse(int len, char* src);
+closure_t parseClosure(char* start, char* end, char** master_c);
